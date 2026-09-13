@@ -32,16 +32,16 @@ export function SubmitAudit() {
 
   const riskCounts = {
     Low: findings.filter(
-      (f) => f.risk_level === "Low" || f.risk_level === "LOW",
+      (f) => String(f.risk_level).toUpperCase() === "LOW",
     ).length,
     Medium: findings.filter(
-      (f) => f.risk_level === "Medium" || f.risk_level === "MEDIUM",
+      (f) => String(f.risk_level).toUpperCase() === "MEDIUM",
     ).length,
     High: findings.filter(
-      (f) => f.risk_level === "High" || f.risk_level === "HIGH",
+      (f) => String(f.risk_level).toUpperCase() === "HIGH",
     ).length,
     Critical: findings.filter(
-      (f) => f.risk_level === "Critical" || f.risk_level === "CRITICAL",
+      (f) => String(f.risk_level).toUpperCase() === "CRITICAL",
     ).length,
   };
 
