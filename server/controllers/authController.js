@@ -18,7 +18,8 @@ const register = async (req, res) => {
       });
     }
 
-    const existingUser = await authModel.getUserByEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await authModel.getUserByEmail(normalizedEmail);
 
     if (existingUser) {
       return res.status(400).json({
@@ -30,7 +31,7 @@ const register = async (req, res) => {
 
     const userId = await authModel.createUser(
       name.trim(),
-      email.trim().toLowerCase(),
+      normalizedEmail,
       hashedPassword,
       role
     );
@@ -44,7 +45,7 @@ const register = async (req, res) => {
             await notificationsModel.createNotification({
               user_id: admin.id,
               title: "New Auditor Registered",
-              message: `New auditor "${name.trim()}" (${email.trim().toLowerCase()}) has registered.`,
+              message: `New auditor "${name.trim()}" (${normalizedEmail}) has registered.`,
               type: "AUDITOR_REGISTERED",
               reference_id: userId
             });
@@ -61,7 +62,7 @@ const register = async (req, res) => {
         id: userId,
         role
       },
-      process.env.JWT_SECRET || "default_secret",
+      process.env.JWT_SECRET,
       {
         expiresIn: '1d'
       }
@@ -79,14 +80,13 @@ const register = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Register error:", error);
     res.status(500).json({
-      message: error.message
+      message: "Internal server error"
     });
   }
 };
 
-
-const db = require("../config/db");
 
 const login = async (req, res) => {
     try {
@@ -102,8 +102,8 @@ const login = async (req, res) => {
         const user = await authModel.getUserByEmail(normalizedEmail);
 
         if (!user) {
-            return res.status(400).json({
-                message: "User not found. Please register first or check your email address."
+            return res.status(401).json({
+                message: "Invalid email or password"
             });
         }
 
@@ -114,20 +114,9 @@ const login = async (req, res) => {
             isPasswordValid = false;
         }
 
-        // Support legacy or manually seeded plain-text passwords
-        if (!isPasswordValid && user.password === password) {
-            isPasswordValid = true;
-            try {
-                const hashedPassword = await bcrypt.hash(password, 10);
-                await db.query("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, user.id]);
-            } catch (hashErr) {
-                // Ignore hash update error if query fails
-            }
-        }
-
         if (!isPasswordValid) {
             return res.status(401).json({
-                message: "Invalid password"
+                message: "Invalid email or password"
             });
         }
 
@@ -136,7 +125,7 @@ const login = async (req, res) => {
                 id: user.id,
                 role: user.role
             },
-            process.env.JWT_SECRET || "default_secret",
+            process.env.JWT_SECRET,
             {
                 expiresIn: "1d"
             }
@@ -163,8 +152,9 @@ const login = async (req, res) => {
 
     }
     catch (error) {
+        console.error("Login error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
     }
 };

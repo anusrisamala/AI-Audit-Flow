@@ -1,20 +1,14 @@
 const express = require("express");
-
 const router = express.Router();
-
 const findingController = require("../controllers/findingController");
-
-// router.get("/", findingController.getAllFindings);
-
-// router.get("/:id", findingController.getFindingById);
-
-// router.post("/", findingController.createFinding);
-
-// router.put("/:id", findingController.updateFinding);
-
-// router.delete("/:id", findingController.deleteFinding);
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
+const {
+    validate,
+    idParamValidation,
+    createFindingSchema,
+    updateFindingSchema,
+} = require("../middleware/validateMiddleware");
 
 router.get(
     "/",
@@ -27,6 +21,7 @@ router.get(
     "/audit/:auditId",
     authMiddleware,
     roleMiddleware("ADMIN", "AUDITOR"),
+    validate(idParamValidation),
     findingController.getFindingsByAudit
 );
 
@@ -41,6 +36,7 @@ router.get(
     "/:id",
     authMiddleware,
     roleMiddleware("ADMIN", "AUDITOR"),
+    validate(idParamValidation),
     findingController.getFindingById
 );
 
@@ -48,20 +44,23 @@ router.post(
     "/",
     authMiddleware,
     roleMiddleware("AUDITOR"),
+    validate(createFindingSchema),
     findingController.createFinding
 );
 
 router.put(
     "/:id",
     authMiddleware,
-    roleMiddleware("AUDITOR"),
+    roleMiddleware("ADMIN", "AUDITOR"),
+    validate(updateFindingSchema),
     findingController.updateFinding
 );
 
 router.delete(
     "/:id",
     authMiddleware,
-    roleMiddleware("AUDITOR"),
+    roleMiddleware("ADMIN", "AUDITOR"),
+    validate(idParamValidation),
     findingController.deleteFinding
 );
 

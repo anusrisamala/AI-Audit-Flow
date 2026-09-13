@@ -11,8 +11,9 @@ const getAllReports = async (req, res) => {
         res.status(200).json(reports);
     }
     catch (error) {
+        console.error("getAllReports error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
     }
 };
@@ -84,9 +85,9 @@ const getReportById = async (req, res) => {
 
     }
     catch (error) {
-
+        console.error("getReportById error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -117,9 +118,9 @@ const createReport = async (req, res) => {
 
     }
     catch (error) {
-
+        console.error("createReport error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -158,9 +159,9 @@ const updateReport = async (req, res) => {
 
     }
     catch (error) {
-
+        console.error("updateReport error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -186,9 +187,9 @@ const deleteReport = async (req, res) => {
 
     }
     catch (error) {
-
+        console.error("deleteReport error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -298,6 +299,13 @@ const notifyReportDownload = async (req, res) => {
         const report = await reportModel.getReportById(id);
         if (!report) {
             return res.status(404).json({ message: "Report not found" });
+        }
+
+        if ((req.user.role || "").toUpperCase() === "AUDITOR") {
+            const audit = await auditModel.getAuditById(report.audit_id);
+            if (!audit || Number(audit.assigned_to) !== Number(req.user.id)) {
+                return res.status(403).json({ message: "Access denied. You are not assigned to this audit report." });
+            }
         }
 
         const auditTitle = report.audit?.title || "Audit";

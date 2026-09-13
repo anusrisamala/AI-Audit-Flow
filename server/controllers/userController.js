@@ -16,8 +16,9 @@ const getProfile = async (req, res) => {
 
     }
     catch (error) {
+        console.error("getProfile error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
     }
 };
@@ -31,8 +32,9 @@ const getAllAuditors = async (req, res) => {
 
     }
     catch (error) {
+        console.error("getAllAuditors error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
     }
 };
@@ -62,8 +64,9 @@ const updateProfile = async (req, res) => {
 
     }
     catch (error) {
+        console.error("updateProfile error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
     }
 };

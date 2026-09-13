@@ -273,8 +273,8 @@ const deleteFinding = async (req, res) => {
     const result = await findingModel.deleteFinding(id, userId, userRole);
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({
-        message: "Finding not found",
+      return res.status(403).json({
+        message: "You are not allowed to delete this finding",
       });
     }
 

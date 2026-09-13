@@ -96,10 +96,6 @@ const changeUserPassword = async (id, currentPassword, newPassword) => {
         isValid = false;
     }
 
-    if (!isValid && user.password === currentPassword) {
-        isValid = true;
-    }
-
     if (!isValid) {
         throw new Error("Current password is incorrect");
     }

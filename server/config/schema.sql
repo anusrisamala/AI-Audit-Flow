@@ -105,3 +105,14 @@ CREATE TABLE IF NOT EXISTS policy_chunks (
 
     FOREIGN KEY (document_id) REFERENCES policy_documents(id) ON DELETE CASCADE
 );
+
+-- 8. INDEXES FOR PERFORMANCE OPTIMIZATION
+CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_audits_assigned_to ON audits(assigned_to);
+CREATE INDEX idx_audits_created_by ON audits(created_by);
+CREATE INDEX idx_audits_status ON audits(status);
+CREATE INDEX idx_findings_audit_id ON findings(audit_id);
+CREATE INDEX idx_findings_risk_level ON findings(risk_level);
+CREATE INDEX idx_reports_audit_id ON reports(audit_id);
+CREATE INDEX idx_notifications_user_read ON notifications(user_id, is_read);
+

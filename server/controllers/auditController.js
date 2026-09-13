@@ -13,9 +13,9 @@ const getAllAudits = async (req, res) => {
 
     }
     catch(error) {
-
+        console.error("getAllAudits error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -32,9 +32,9 @@ const getMyAudits = async (req, res) => {
 
     }
     catch (error) {
-
+        console.error("getMyAudits error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -177,9 +177,9 @@ const updateAudit = async (req, res) => {
         });
 
     } catch (error) {
-
+        console.error("updateAudit error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -204,9 +204,9 @@ const deleteAudit = async (req, res) => {
         });
 
     } catch (error) {
-
+        console.error("deleteAudit error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -235,9 +235,9 @@ const getAuditById = async (req, res) => {
 
     }
     catch (error) {
-
+        console.error("getAuditById error:", error);
         res.status(500).json({
-            message: error.message
+            message: "Internal server error"
         });
 
     }
@@ -377,9 +377,9 @@ const submitAudit = async (req, res) => {
 
     }
     catch(error){
-
+        console.error("submitAudit error:", error);
         res.status(500).json({
-            message:error.message
+            message: "Internal server error"
         });
 
     }
